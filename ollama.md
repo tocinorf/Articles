@@ -1,12 +1,14 @@
 # Private AI with Llama
-Esta guía te llevará a través del proceso para probar un modelo como Llama en linux , configuraremos ollama, descargaremos el modelo llama que queramos y probaremos crear modelos personalizados cambiando la configuración.
+Esta guía te llevará a través de los pasos necesarios para probar un modelo como Llama en un servidor local usando linux y ollama:  descargaremos el modelo de llama que queramos, configuraremos ollama, y probaremos crear modelos personalizados cambiando la configuración.
 
-# Llama models
-Donde encontrar los modelos:
+# Modelos de Llama y sus requerimientos
+La última version de Llama es la 3.2 y la tenemos disponible en distintas versiones dependiendo del caso de uso que queramos darle, cada una con sus requerimientos para poder hacerla funcionar de manera óptima.
+
+Si queremos bajar LLama manualmente podemos encontrarla aqui:
 https://www.llama.com/llama-downloads/
 https://huggingface.co/collections/meta-llama/llama-32-66f448ffc8c32f949b04c8cf
 
-Modelos actuales de llama y requisitos
+Modelos actuales de llama y requisitos de hardware.
 | Modelos              | Descripción                                                                                        | Requerimientos |                                                                                                                                                                                    |
 |----------------------|----------------------------------------------------------------------------------------------------|:--------------:|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `Llama 3.2 1B`         | Modelo ligero y eficiente para usar en cualquier lugar, dispositivo móvil o edge.     |       CPU      | Procesador multinúcleo                                                               |
@@ -26,50 +28,56 @@ Modelos actuales de llama y requisitos
 |                      |                                                                                                    |       GPU      | GPU de última generación con al menos 180GB VRAM para poder soportar la carga del modelo completo. Recomendado: NVIDIA A100 con al menos 80GB VRAM o superior. Para Inferencia: Múltiples GPU de un nivel inferior en paralelo podria ser una opción. |
 |                      |                                                                                                    |     Almacenamiento    | NVMe SSD con al menos  500GB de espacio libre. Aproximadamente 180GB son necesario solo para almacenar el modelo.                                                                                       |                                                                                     |
 
-# Llama 3.2 using Ollama
+# Llama 3.2 usando Ollama
+Para esta guia hemos usado la última versión de Ubuntu 22.04 pero si quisiermos ollama tambien está disponible para Windows y Mac.
 
-## Guía para Instalar y Probar Llama con Ollama en Linux
+Para más información sobre Ollama y su desarrollo, puedes visitar su [repositorio en GitHub](https://github.com/ollama/ollama) o en su [web](https://ollama.com/)
+
+
+## Instalar Llama con Ollama en Linux
 
 ### 1. Instalación de Ollama
 
-El primer paso es instalar Ollama, una herramienta de línea de comandos para gestionar y ejecutar modelos de lenguaje. La instalación se realiza de forma sencilla usando el siguiente comando en la terminal de Linux:
+El primer paso es instalar Ollama, una herramienta de línea de comandos para gestionar y ejecutar modelos de lenguaje. La instalación se realiza de forma sencilla usando el siguiente comando:
 
 `curl -fsSL https://ollama.com/install.sh | sh` 
 
 Una vez que se complete la instalación, puedes verificar que Ollama está correctamente instalado ejecutando el comando `ollama` en la terminal, lo cual mostrará las opciones disponibles.
 
-Para más información sobre Ollama y su desarrollo, puedes visitar su [repositorio en GitHub](https://github.com/ollama/ollama).
-
 ### 2. Descargar y Ejecutar el Modelo Llama
 
-Antes de proceder a ejecutar el modelo, es importante tener en cuenta que Ollama requiere que tu equipo tenga aproximadamente el doble de la memoria RAM del tamaño del modelo que deseas ejecutar. Esto asegura que el modelo funcione de manera fluida.
+Antes de proceder a ejecutar el modelo, es importante tener en cuenta que Ollama requiere que tu equipo o máquina virtual tenga aproximadamente el doble de la memoria RAM del tamaño del modelo que deseas ejecutar. Esto asegura que el modelo funcione de manera fluida. Para modelos muy grandes podemos seguir los requisitos que describiamos en la sección anterior.
 
 Para correr el modelo Llama 3.2, usa el siguiente comando en la terminal:
 
-
 `ollama run llama3.2` 
+
+si queremos especificar una versión en concreto podemos usar:
+
+`ollama run llama3.2:1b` o `ollama run llama3.2:3b`
 
 Esto descargará el modelo (si no lo tienes ya) y lo ejecutará en tu entorno de trabajo.
 
+Si queremos probar otros modelos o parametrizaciones distintas podemos consultar las opciones en su [libreria](https://ollama.com/library)
 ### 3. Crear un Nuevo Modelfile
 
 Ollama permite crear configuraciones personalizadas para los modelos usando un archivo llamado `Modelfile`. Aquí puedes especificar el modelo base, parámetros de configuración, y ajustes de personalización para crear una experiencia única.
 
 Para crear un archivo `Modelfile`, abre un editor de texto como `vi` y escribe el siguiente contenido:
 
-
 ```text
-FROM llama2
+FROM llama3.2:3b
 
-# Setea la temperatura para ajustar la creatividad del modelo (1 es más creativo, valores más bajos son más coherentes)
+# set the temperature to 1 [higher is more creative, lower is more coherent]
 PARAMETER temperature 1
 
-# Define un prompt del sistema para establecer el contexto o rol del modelo
-SYSTEM “”
+# set the system prompt
+SYSTEM """
 You are Mario from Super Mario Bros. Answer as Mario, the assistant, only.
-“”```
+"""
 ```
-Este archivo especifica que el modelo base es `llama2`, y configura el sistema para que el modelo responda como si fuera Mario, el personaje de Super Mario Bros. También ajusta la "temperatura" del modelo, lo que afecta la creatividad en las respuestas generadas.
+
+Este archivo especifica que el modelo base es `llama3.2:3b`, y configura el sistema para que el modelo responda como si fuera Mario, el personaje de Super Mario Bros. También ajusta la "temperatura" del modelo, lo que afecta la creatividad en las respuestas generadas.
 
 Para guardar el archivo y crear un nuevo modelo con esta configuración, usa el siguiente comando:
 
@@ -81,11 +89,8 @@ Una vez que hayas creado el nuevo modelo, puedes probarlo ejecutando el siguient
 
 `ollama run mario` 
 
-Este comando iniciará el modelo configurado, permitiendo que Mario sea el asistente en tus consultas.
+Este comando iniciará el modelo configurado, permitiendo que Mario sea quien te responda a tus preguntas con su estilo propio.
 
-### Recursos Adicionales
+## Recursos Adicionales
 
-Si quieres explorar más configuraciones o integraciones, revisa el siguiente proyecto en GitHub, que ofrece ejemplos adicionales para trabajar con Ollama: [chatbot-ollama](https://github.com/ivanfioravanti/chatbot-ollama).
-
-
-> Written with by [Francisco Tocino](https://thecloudarchitects.es/).
+Si quisieras tener una interfaz web para interactuar con ollama una muy buena opción seria usar utilizar [open-webui](https://github.com/open-webui/open-webui) en tu servidor.
