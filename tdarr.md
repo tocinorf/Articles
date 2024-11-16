@@ -2,7 +2,7 @@ Hoy vamos a hablar de Tdarr, porqué he decidido usarlo y las opciones que tenem
 
 Tdarr V2 es un software que nos permite hacer una conversión automática de nuestra biblioteca de videos, películas series etc.
 
-Link the Tdarr:
+Enlace para Tdarr:
 
 <https://home.tdarr.io/>
 
